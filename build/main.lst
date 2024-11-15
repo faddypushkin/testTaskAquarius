@@ -1,0 +1,1843 @@
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 1
+
+
+   1              		.cpu cortex-m4
+   2              		.arch armv7e-m
+   3              		.fpu fpv4-sp-d16
+   4              		.eabi_attribute 27, 1
+   5              		.eabi_attribute 28, 1
+   6              		.eabi_attribute 20, 1
+   7              		.eabi_attribute 21, 1
+   8              		.eabi_attribute 23, 3
+   9              		.eabi_attribute 24, 1
+  10              		.eabi_attribute 25, 1
+  11              		.eabi_attribute 26, 1
+  12              		.eabi_attribute 30, 1
+  13              		.eabi_attribute 34, 1
+  14              		.eabi_attribute 18, 4
+  15              		.file	"main.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.MX_GPIO_Init,"ax",%progbits
+  20              		.align	1
+  21              		.syntax unified
+  22              		.thumb
+  23              		.thumb_func
+  25              	MX_GPIO_Init:
+  26              	.LFB136:
+  27              		.file 1 "Core/Src/main.c"
+   1:Core/Src/main.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/main.c **** /**
+   3:Core/Src/main.c ****   ******************************************************************************
+   4:Core/Src/main.c ****   * @file           : main.c
+   5:Core/Src/main.c ****   * @brief          : Main program body
+   6:Core/Src/main.c ****   ******************************************************************************
+   7:Core/Src/main.c ****   * @author Dmitriy Stepanenko
+   8:Core/Src/main.c ****   * @date November 2024 
+   9:Core/Src/main.c ****   * @attention
+  10:Core/Src/main.c ****   *
+  11:Core/Src/main.c ****   * Copyright (c) 2024 STMicroelectronics.
+  12:Core/Src/main.c ****   * All rights reserved.
+  13:Core/Src/main.c ****   *
+  14:Core/Src/main.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  15:Core/Src/main.c ****   * in the root directory of this software component.
+  16:Core/Src/main.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  17:Core/Src/main.c ****   *
+  18:Core/Src/main.c ****   ******************************************************************************
+  19:Core/Src/main.c ****   */
+  20:Core/Src/main.c **** /* USER CODE END Header */
+  21:Core/Src/main.c **** /* Includes ------------------------------------------------------------------*/
+  22:Core/Src/main.c **** #include "main.h"
+  23:Core/Src/main.c **** 
+  24:Core/Src/main.c **** /* Private includes ----------------------------------------------------------*/
+  25:Core/Src/main.c **** /* USER CODE BEGIN Includes */
+  26:Core/Src/main.c **** 
+  27:Core/Src/main.c **** /* USER CODE END Includes */
+  28:Core/Src/main.c **** 
+  29:Core/Src/main.c **** /* Private typedef -----------------------------------------------------------*/
+  30:Core/Src/main.c **** /* USER CODE BEGIN PTD */
+  31:Core/Src/main.c **** 
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 2
+
+
+  32:Core/Src/main.c **** /* USER CODE END PTD */
+  33:Core/Src/main.c **** 
+  34:Core/Src/main.c **** /* Private define ------------------------------------------------------------*/
+  35:Core/Src/main.c **** /* USER CODE BEGIN PD */
+  36:Core/Src/main.c **** 
+  37:Core/Src/main.c **** /* USER CODE END PD */
+  38:Core/Src/main.c **** 
+  39:Core/Src/main.c **** /* Private macro -------------------------------------------------------------*/
+  40:Core/Src/main.c **** /* USER CODE BEGIN PM */
+  41:Core/Src/main.c **** 
+  42:Core/Src/main.c **** /* USER CODE END PM */
+  43:Core/Src/main.c **** 
+  44:Core/Src/main.c **** /* Private variables ---------------------------------------------------------*/
+  45:Core/Src/main.c **** TIM_HandleTypeDef htim2;			///<	Variable where timer (TIM2) settings are stored
+  46:Core/Src/main.c **** 
+  47:Core/Src/main.c **** UART_HandleTypeDef huart1;			///< Variable where UART (USART1) settings are stored
+  48:Core/Src/main.c **** 
+  49:Core/Src/main.c **** /* USER CODE BEGIN PV */
+  50:Core/Src/main.c **** int firstPartOfMessage = 0;         ///< Flag responsible for the first part of the message
+  51:Core/Src/main.c **** int secondPartOfMessage = 0;        ///< Flag responsible for the second part of the message
+  52:Core/Src/main.c **** 
+  53:Core/Src/main.c **** char message[5] = "00000";          ///< Variable for storing the received message
+  54:Core/Src/main.c **** char code[6] = "000000";            ///< Variable for storing the code
+  55:Core/Src/main.c **** 
+  56:Core/Src/main.c **** char firstPartOfCode[3] = "000";    ///< Variable for storing the first part of the message
+  57:Core/Src/main.c **** char secondPartOfCode[3] = "000";   ///< Variable for storing the second part of the message
+  58:Core/Src/main.c **** 
+  59:Core/Src/main.c **** /* USER CODE END PV */
+  60:Core/Src/main.c **** 
+  61:Core/Src/main.c **** /* Private function prototypes -----------------------------------------------*/
+  62:Core/Src/main.c **** void SystemClock_Config(void);
+  63:Core/Src/main.c **** static void MX_GPIO_Init(void);
+  64:Core/Src/main.c **** static void MX_TIM2_Init(void);
+  65:Core/Src/main.c **** static void MX_USART1_UART_Init(void);
+  66:Core/Src/main.c **** /* USER CODE BEGIN PFP */
+  67:Core/Src/main.c **** void selectMessage(void);
+  68:Core/Src/main.c **** void analysisMessage(void);
+  69:Core/Src/main.c **** 
+  70:Core/Src/main.c **** /* USER CODE END PFP */
+  71:Core/Src/main.c **** 
+  72:Core/Src/main.c **** /* Private user code ---------------------------------------------------------*/
+  73:Core/Src/main.c **** /* USER CODE BEGIN 0 */
+  74:Core/Src/main.c **** 
+  75:Core/Src/main.c **** /* USER CODE END 0 */
+  76:Core/Src/main.c **** 
+  77:Core/Src/main.c **** /**
+  78:Core/Src/main.c ****   * @brief  The application entry point.
+  79:Core/Src/main.c ****   * @retval int
+  80:Core/Src/main.c ****   * 
+  81:Core/Src/main.c ****   * Code after initialize all configured parameters
+  82:Core/Src/main.c ****   * @code
+  83:Core/Src/main.c ****   * HAL_TIM_Base_Start_IT(&htim2);
+  84:Core/Src/main.c ****   * 
+  85:Core/Src/main.c ****   * while (1){
+  86:Core/Src/main.c ****   *     HAL_UART_Receive_IT(&huart1, message, 5);
+  87:Core/Src/main.c ****   * 
+  88:Core/Src/main.c ****   *     selectMessage();
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 3
+
+
+  89:Core/Src/main.c ****   * }
+  90:Core/Src/main.c ****   * @endcode
+  91:Core/Src/main.c ****   */
+  92:Core/Src/main.c **** int main(void)
+  93:Core/Src/main.c **** {
+  94:Core/Src/main.c **** 
+  95:Core/Src/main.c ****   /* USER CODE BEGIN 1 */
+  96:Core/Src/main.c **** 
+  97:Core/Src/main.c ****   /* USER CODE END 1 */
+  98:Core/Src/main.c **** 
+  99:Core/Src/main.c ****   /* MCU Configuration--------------------------------------------------------*/
+ 100:Core/Src/main.c **** 
+ 101:Core/Src/main.c ****   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+ 102:Core/Src/main.c ****   HAL_Init();
+ 103:Core/Src/main.c **** 
+ 104:Core/Src/main.c ****   /* USER CODE BEGIN Init */
+ 105:Core/Src/main.c **** 
+ 106:Core/Src/main.c ****   /* USER CODE END Init */
+ 107:Core/Src/main.c **** 
+ 108:Core/Src/main.c ****   /* Configure the system clock */
+ 109:Core/Src/main.c ****   SystemClock_Config();
+ 110:Core/Src/main.c **** 
+ 111:Core/Src/main.c ****   /* USER CODE BEGIN SysInit */
+ 112:Core/Src/main.c **** 
+ 113:Core/Src/main.c ****   /* USER CODE END SysInit */
+ 114:Core/Src/main.c **** 
+ 115:Core/Src/main.c ****   /* Initialize all configured peripherals */
+ 116:Core/Src/main.c ****   MX_GPIO_Init();
+ 117:Core/Src/main.c ****   MX_TIM2_Init();
+ 118:Core/Src/main.c ****   MX_USART1_UART_Init();
+ 119:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ 120:Core/Src/main.c **** 
+ 121:Core/Src/main.c ****   /* USER CODE END 2 */
+ 122:Core/Src/main.c **** 
+ 123:Core/Src/main.c ****   /* Infinite loop */
+ 124:Core/Src/main.c ****   /* USER CODE BEGIN WHILE */
+ 125:Core/Src/main.c **** 
+ 126:Core/Src/main.c ****   HAL_TIM_Base_Start_IT(&htim2);
+ 127:Core/Src/main.c **** 
+ 128:Core/Src/main.c ****   while (1)
+ 129:Core/Src/main.c ****   {
+ 130:Core/Src/main.c ****     /* USER CODE END WHILE */
+ 131:Core/Src/main.c ****       
+ 132:Core/Src/main.c ****     /* USER CODE BEGIN 3 */
+ 133:Core/Src/main.c ****       HAL_UART_Receive_IT(&huart1, message, 5);
+ 134:Core/Src/main.c **** 
+ 135:Core/Src/main.c ****       selectMessage();
+ 136:Core/Src/main.c ****   }
+ 137:Core/Src/main.c ****   /* USER CODE END 3 */
+ 138:Core/Src/main.c **** }
+ 139:Core/Src/main.c **** 
+ 140:Core/Src/main.c **** /**
+ 141:Core/Src/main.c ****   * @brief System Clock Configuration
+ 142:Core/Src/main.c ****   * 
+ 143:Core/Src/main.c ****   * Processor frequency - 80 MHz\n
+ 144:Core/Src/main.c ****   * 
+ 145:Core/Src/main.c ****   * Other settings are standard for CubeMX
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 4
+
+
+ 146:Core/Src/main.c ****   * @retval None
+ 147:Core/Src/main.c ****   */
+ 148:Core/Src/main.c **** void SystemClock_Config(void)
+ 149:Core/Src/main.c **** {
+ 150:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 151:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 152:Core/Src/main.c **** 
+ 153:Core/Src/main.c ****   /** Configure the main internal regulator output voltage
+ 154:Core/Src/main.c ****   */
+ 155:Core/Src/main.c ****   if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE1) != HAL_OK)
+ 156:Core/Src/main.c ****   {
+ 157:Core/Src/main.c ****     Error_Handler();
+ 158:Core/Src/main.c ****   }
+ 159:Core/Src/main.c **** 
+ 160:Core/Src/main.c ****   /** Initializes the RCC Oscillators according to the specified parameters
+ 161:Core/Src/main.c ****   * in the RCC_OscInitTypeDef structure.
+ 162:Core/Src/main.c ****   */
+ 163:Core/Src/main.c ****   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_MSI;
+ 164:Core/Src/main.c ****   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+ 165:Core/Src/main.c ****   RCC_OscInitStruct.MSICalibrationValue = 0;
+ 166:Core/Src/main.c ****   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+ 167:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 168:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
+ 169:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 1;
+ 170:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 40;
+ 171:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
+ 172:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+ 173:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+ 174:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 175:Core/Src/main.c ****   {
+ 176:Core/Src/main.c ****     Error_Handler();
+ 177:Core/Src/main.c ****   }
+ 178:Core/Src/main.c **** 
+ 179:Core/Src/main.c ****   /** Initializes the CPU, AHB and APB buses clocks
+ 180:Core/Src/main.c ****   */
+ 181:Core/Src/main.c ****   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+ 182:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 183:Core/Src/main.c ****   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+ 184:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 185:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 186:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 187:Core/Src/main.c **** 
+ 188:Core/Src/main.c ****   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_4) != HAL_OK)
+ 189:Core/Src/main.c ****   {
+ 190:Core/Src/main.c ****     Error_Handler();
+ 191:Core/Src/main.c ****   }
+ 192:Core/Src/main.c **** }
+ 193:Core/Src/main.c **** 
+ 194:Core/Src/main.c **** /**
+ 195:Core/Src/main.c ****   * @brief TIM2 Initialization Function
+ 196:Core/Src/main.c ****   * 
+ 197:Core/Src/main.c ****   * Processor frequency - 80 MHz;\n
+ 198:Core/Src/main.c ****   * Prescaler = 40000-1;\n
+ 199:Core/Src/main.c ****   * Period = 7200000;\n
+ 200:Core/Src/main.c ****   * 
+ 201:Core/Src/main.c ****   * =>Counter fills up in an hour\n
+ 202:Core/Src/main.c ****   * 
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 5
+
+
+ 203:Core/Src/main.c ****   * Other settings are standard for CubeMX
+ 204:Core/Src/main.c ****   * @param None
+ 205:Core/Src/main.c ****   * @retval None
+ 206:Core/Src/main.c ****   */
+ 207:Core/Src/main.c **** static void MX_TIM2_Init(void)
+ 208:Core/Src/main.c **** {
+ 209:Core/Src/main.c **** 
+ 210:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 0 */
+ 211:Core/Src/main.c **** 
+ 212:Core/Src/main.c ****   /* USER CODE END TIM2_Init 0 */
+ 213:Core/Src/main.c **** 
+ 214:Core/Src/main.c ****   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+ 215:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 216:Core/Src/main.c **** 
+ 217:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 1 */
+ 218:Core/Src/main.c **** 
+ 219:Core/Src/main.c ****   /* USER CODE END TIM2_Init 1 */
+ 220:Core/Src/main.c ****   htim2.Instance = TIM2;
+ 221:Core/Src/main.c ****   htim2.Init.Prescaler = 40000-1;
+ 222:Core/Src/main.c ****   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 223:Core/Src/main.c ****   htim2.Init.Period = 7200000;
+ 224:Core/Src/main.c ****   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 225:Core/Src/main.c ****   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 226:Core/Src/main.c ****   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+ 227:Core/Src/main.c ****   {
+ 228:Core/Src/main.c ****     Error_Handler();
+ 229:Core/Src/main.c ****   }
+ 230:Core/Src/main.c ****   sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+ 231:Core/Src/main.c ****   if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+ 232:Core/Src/main.c ****   {
+ 233:Core/Src/main.c ****     Error_Handler();
+ 234:Core/Src/main.c ****   }
+ 235:Core/Src/main.c ****   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+ 236:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 237:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+ 238:Core/Src/main.c ****   {
+ 239:Core/Src/main.c ****     Error_Handler();
+ 240:Core/Src/main.c ****   }
+ 241:Core/Src/main.c ****   /* USER CODE BEGIN TIM2_Init 2 */
+ 242:Core/Src/main.c **** 
+ 243:Core/Src/main.c ****   /* USER CODE END TIM2_Init 2 */
+ 244:Core/Src/main.c **** 
+ 245:Core/Src/main.c **** }
+ 246:Core/Src/main.c **** 
+ 247:Core/Src/main.c **** /**
+ 248:Core/Src/main.c ****   * @brief USART1 Initialization Function
+ 249:Core/Src/main.c ****   * 
+ 250:Core/Src/main.c ****   * Baud Rate = 9600 Bits/s;\n
+ 251:Core/Src/main.c ****   * Word Length = 8 Bits;\n
+ 252:Core/Src/main.c ****   * Stop Bits = 1;\n
+ 253:Core/Src/main.c ****   * 
+ 254:Core/Src/main.c ****   * Other settings are standard for CubeMX
+ 255:Core/Src/main.c ****   * @param None
+ 256:Core/Src/main.c ****   * @retval None
+ 257:Core/Src/main.c ****   */
+ 258:Core/Src/main.c **** static void MX_USART1_UART_Init(void)
+ 259:Core/Src/main.c **** {
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 6
+
+
+ 260:Core/Src/main.c **** 
+ 261:Core/Src/main.c ****   /* USER CODE BEGIN USART1_Init 0 */
+ 262:Core/Src/main.c **** 
+ 263:Core/Src/main.c ****   /* USER CODE END USART1_Init 0 */
+ 264:Core/Src/main.c **** 
+ 265:Core/Src/main.c ****   /* USER CODE BEGIN USART1_Init 1 */
+ 266:Core/Src/main.c **** 
+ 267:Core/Src/main.c ****   /* USER CODE END USART1_Init 1 */
+ 268:Core/Src/main.c ****   huart1.Instance = USART1;
+ 269:Core/Src/main.c ****   huart1.Init.BaudRate = 9600;
+ 270:Core/Src/main.c ****   huart1.Init.WordLength = UART_WORDLENGTH_8B;
+ 271:Core/Src/main.c ****   huart1.Init.StopBits = UART_STOPBITS_1;
+ 272:Core/Src/main.c ****   huart1.Init.Parity = UART_PARITY_NONE;
+ 273:Core/Src/main.c ****   huart1.Init.Mode = UART_MODE_TX_RX;
+ 274:Core/Src/main.c ****   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+ 275:Core/Src/main.c ****   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+ 276:Core/Src/main.c ****   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+ 277:Core/Src/main.c ****   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+ 278:Core/Src/main.c ****   if (HAL_UART_Init(&huart1) != HAL_OK)
+ 279:Core/Src/main.c ****   {
+ 280:Core/Src/main.c ****     Error_Handler();
+ 281:Core/Src/main.c ****   }
+ 282:Core/Src/main.c ****   /* USER CODE BEGIN USART1_Init 2 */
+ 283:Core/Src/main.c **** 
+ 284:Core/Src/main.c ****   /* USER CODE END USART1_Init 2 */
+ 285:Core/Src/main.c **** 
+ 286:Core/Src/main.c **** }
+ 287:Core/Src/main.c **** 
+ 288:Core/Src/main.c **** /**
+ 289:Core/Src/main.c ****   * @brief GPIO Initialization Function
+ 290:Core/Src/main.c ****   * 
+ 291:Core/Src/main.c ****   * Settings are standard for CubeMX
+ 292:Core/Src/main.c ****   * @param None
+ 293:Core/Src/main.c ****   * @retval None
+ 294:Core/Src/main.c ****   */
+ 295:Core/Src/main.c **** static void MX_GPIO_Init(void)
+ 296:Core/Src/main.c **** {
+  28              		.loc 1 296 1 view -0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              		@ link register save eliminated.
+  33 0000 82B0     		sub	sp, sp, #8
+  34              	.LCFI0:
+  35              		.cfi_def_cfa_offset 8
+ 297:Core/Src/main.c **** /* USER CODE BEGIN MX_GPIO_Init_1 */
+ 298:Core/Src/main.c **** /* USER CODE END MX_GPIO_Init_1 */
+ 299:Core/Src/main.c **** 
+ 300:Core/Src/main.c ****   /* GPIO Ports Clock Enable */
+ 301:Core/Src/main.c ****   __HAL_RCC_GPIOB_CLK_ENABLE();
+  36              		.loc 1 301 3 view .LVU1
+  37              	.LBB4:
+  38              		.loc 1 301 3 view .LVU2
+  39              		.loc 1 301 3 view .LVU3
+  40 0002 064B     		ldr	r3, .L3
+  41 0004 DA6C     		ldr	r2, [r3, #76]
+  42 0006 42F00202 		orr	r2, r2, #2
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 7
+
+
+  43 000a DA64     		str	r2, [r3, #76]
+  44              		.loc 1 301 3 view .LVU4
+  45 000c DB6C     		ldr	r3, [r3, #76]
+  46 000e 03F00203 		and	r3, r3, #2
+  47 0012 0193     		str	r3, [sp, #4]
+  48              		.loc 1 301 3 view .LVU5
+  49 0014 019B     		ldr	r3, [sp, #4]
+  50              	.LBE4:
+  51              		.loc 1 301 3 view .LVU6
+ 302:Core/Src/main.c **** 
+ 303:Core/Src/main.c **** /* USER CODE BEGIN MX_GPIO_Init_2 */
+ 304:Core/Src/main.c **** /* USER CODE END MX_GPIO_Init_2 */
+ 305:Core/Src/main.c **** }
+  52              		.loc 1 305 1 is_stmt 0 view .LVU7
+  53 0016 02B0     		add	sp, sp, #8
+  54              	.LCFI1:
+  55              		.cfi_def_cfa_offset 0
+  56              		@ sp needed
+  57 0018 7047     		bx	lr
+  58              	.L4:
+  59 001a 00BF     		.align	2
+  60              	.L3:
+  61 001c 00100240 		.word	1073876992
+  62              		.cfi_endproc
+  63              	.LFE136:
+  65              		.section	.text.selectMessage,"ax",%progbits
+  66              		.align	1
+  67              		.global	selectMessage
+  68              		.syntax unified
+  69              		.thumb
+  70              		.thumb_func
+  72              	selectMessage:
+  73              	.LFB137:
+ 306:Core/Src/main.c **** 
+ 307:Core/Src/main.c **** /* USER CODE BEGIN 4 */
+ 308:Core/Src/main.c **** /**
+ 309:Core/Src/main.c ****  * @brief Select messages function
+ 310:Core/Src/main.c ****  * 
+ 311:Core/Src/main.c ****  * Function that determines what part of the code was sent
+ 312:Core/Src/main.c ****  * @param None
+ 313:Core/Src/main.c ****  * @retval None
+ 314:Core/Src/main.c ****  * 
+ 315:Core/Src/main.c ****  * @code
+ 316:Core/Src/main.c ****  * if (message[0] == '1') {
+ 317:Core/Src/main.c ****  *       firstPartOfMessage = 1;
+ 318:Core/Src/main.c ****  *       for (int i = 0; i != 3; ++i) {
+ 319:Core/Src/main.c ****  *           firstPartOfCode[i] = message[i + 2];
+ 320:Core/Src/main.c ****  *       }
+ 321:Core/Src/main.c ****  *   }
+ 322:Core/Src/main.c ****  *   else if (message[0] == '2') {
+ 323:Core/Src/main.c ****  *       secondPartOfMessage = 1;
+ 324:Core/Src/main.c ****  *       for (int i = 0; i != 3; ++i) {
+ 325:Core/Src/main.c ****  *           secondPartOfCode[i] = message[i + 2];
+ 326:Core/Src/main.c ****  *       }
+ 327:Core/Src/main.c ****  *   }
+ 328:Core/Src/main.c ****  * @endcode
+ 329:Core/Src/main.c ****  */
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 8
+
+
+ 330:Core/Src/main.c **** void selectMessage(void) {
+  74              		.loc 1 330 26 is_stmt 1 view -0
+  75              		.cfi_startproc
+  76              		@ args = 0, pretend = 0, frame = 0
+  77              		@ frame_needed = 0, uses_anonymous_args = 0
+  78              		@ link register save eliminated.
+ 331:Core/Src/main.c ****     if (message[0] == '1') {
+  79              		.loc 1 331 5 view .LVU9
+  80              		.loc 1 331 16 is_stmt 0 view .LVU10
+  81 0000 114B     		ldr	r3, .L14
+  82 0002 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  83              		.loc 1 331 8 view .LVU11
+  84 0004 312B     		cmp	r3, #49
+  85 0006 02D0     		beq	.L12
+ 332:Core/Src/main.c ****         firstPartOfMessage = 1;
+ 333:Core/Src/main.c ****         for (int i = 0; i != 3; ++i) {
+ 334:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 335:Core/Src/main.c ****         }
+ 336:Core/Src/main.c ****     }
+ 337:Core/Src/main.c ****     else if (message[0] == '2') {
+  86              		.loc 1 337 10 is_stmt 1 view .LVU12
+  87              		.loc 1 337 13 is_stmt 0 view .LVU13
+  88 0008 322B     		cmp	r3, #50
+  89 000a 0ED0     		beq	.L13
+  90              	.L5:
+ 338:Core/Src/main.c ****         secondPartOfMessage = 1;
+ 339:Core/Src/main.c ****         for (int i = 0; i != 3; ++i) {
+ 340:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 341:Core/Src/main.c ****         }
+ 342:Core/Src/main.c ****     }
+ 343:Core/Src/main.c **** }
+  91              		.loc 1 343 1 view .LVU14
+  92 000c 7047     		bx	lr
+  93              	.L12:
+ 332:Core/Src/main.c ****         firstPartOfMessage = 1;
+  94              		.loc 1 332 9 is_stmt 1 view .LVU15
+ 332:Core/Src/main.c ****         firstPartOfMessage = 1;
+  95              		.loc 1 332 28 is_stmt 0 view .LVU16
+  96 000e 0F4B     		ldr	r3, .L14+4
+  97 0010 0122     		movs	r2, #1
+  98 0012 1A60     		str	r2, [r3]
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+  99              		.loc 1 333 9 is_stmt 1 view .LVU17
+ 100              	.LBB5:
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 101              		.loc 1 333 14 view .LVU18
+ 102              	.LVL0:
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 103              		.loc 1 333 18 is_stmt 0 view .LVU19
+ 104 0014 0023     		movs	r3, #0
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 105              		.loc 1 333 9 view .LVU20
+ 106 0016 05E0     		b	.L7
+ 107              	.LVL1:
+ 108              	.L8:
+ 334:Core/Src/main.c ****         }
+ 109              		.loc 1 334 13 is_stmt 1 discriminator 3 view .LVU21
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 9
+
+
+ 334:Core/Src/main.c ****         }
+ 110              		.loc 1 334 44 is_stmt 0 discriminator 3 view .LVU22
+ 111 0018 9A1C     		adds	r2, r3, #2
+ 334:Core/Src/main.c ****         }
+ 112              		.loc 1 334 41 discriminator 3 view .LVU23
+ 113 001a 0B49     		ldr	r1, .L14
+ 114 001c 895C     		ldrb	r1, [r1, r2]	@ zero_extendqisi2
+ 334:Core/Src/main.c ****         }
+ 115              		.loc 1 334 32 discriminator 3 view .LVU24
+ 116 001e 0C4A     		ldr	r2, .L14+8
+ 117 0020 D154     		strb	r1, [r2, r3]
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 118              		.loc 1 333 33 is_stmt 1 discriminator 3 view .LVU25
+ 119 0022 0133     		adds	r3, r3, #1
+ 120              	.LVL2:
+ 121              	.L7:
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 122              		.loc 1 333 25 discriminator 1 view .LVU26
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 123              		.loc 1 333 9 is_stmt 0 discriminator 1 view .LVU27
+ 124 0024 032B     		cmp	r3, #3
+ 125 0026 F7D1     		bne	.L8
+ 126 0028 7047     		bx	lr
+ 127              	.LVL3:
+ 128              	.L13:
+ 333:Core/Src/main.c ****             firstPartOfCode[i] = message[i + 2];
+ 129              		.loc 1 333 9 discriminator 1 view .LVU28
+ 130              	.LBE5:
+ 338:Core/Src/main.c ****         secondPartOfMessage = 1;
+ 131              		.loc 1 338 9 is_stmt 1 view .LVU29
+ 338:Core/Src/main.c ****         secondPartOfMessage = 1;
+ 132              		.loc 1 338 29 is_stmt 0 view .LVU30
+ 133 002a 0A4B     		ldr	r3, .L14+12
+ 134 002c 0122     		movs	r2, #1
+ 135 002e 1A60     		str	r2, [r3]
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 136              		.loc 1 339 9 is_stmt 1 view .LVU31
+ 137              	.LBB6:
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 138              		.loc 1 339 14 view .LVU32
+ 139              	.LVL4:
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 140              		.loc 1 339 18 is_stmt 0 view .LVU33
+ 141 0030 0023     		movs	r3, #0
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 142              		.loc 1 339 9 view .LVU34
+ 143 0032 05E0     		b	.L10
+ 144              	.LVL5:
+ 145              	.L11:
+ 340:Core/Src/main.c ****         }
+ 146              		.loc 1 340 13 is_stmt 1 discriminator 3 view .LVU35
+ 340:Core/Src/main.c ****         }
+ 147              		.loc 1 340 45 is_stmt 0 discriminator 3 view .LVU36
+ 148 0034 9A1C     		adds	r2, r3, #2
+ 340:Core/Src/main.c ****         }
+ 149              		.loc 1 340 42 discriminator 3 view .LVU37
+ 150 0036 0449     		ldr	r1, .L14
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 10
+
+
+ 151 0038 895C     		ldrb	r1, [r1, r2]	@ zero_extendqisi2
+ 340:Core/Src/main.c ****         }
+ 152              		.loc 1 340 33 discriminator 3 view .LVU38
+ 153 003a 074A     		ldr	r2, .L14+16
+ 154 003c D154     		strb	r1, [r2, r3]
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 155              		.loc 1 339 33 is_stmt 1 discriminator 3 view .LVU39
+ 156 003e 0133     		adds	r3, r3, #1
+ 157              	.LVL6:
+ 158              	.L10:
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 159              		.loc 1 339 25 discriminator 1 view .LVU40
+ 339:Core/Src/main.c ****             secondPartOfCode[i] = message[i + 2];
+ 160              		.loc 1 339 9 is_stmt 0 discriminator 1 view .LVU41
+ 161 0040 032B     		cmp	r3, #3
+ 162 0042 F7D1     		bne	.L11
+ 163 0044 E2E7     		b	.L5
+ 164              	.L15:
+ 165 0046 00BF     		.align	2
+ 166              	.L14:
+ 167 0048 00000000 		.word	.LANCHOR0
+ 168 004c 00000000 		.word	.LANCHOR1
+ 169 0050 00000000 		.word	.LANCHOR2
+ 170 0054 00000000 		.word	.LANCHOR3
+ 171 0058 00000000 		.word	.LANCHOR4
+ 172              	.LBE6:
+ 173              		.cfi_endproc
+ 174              	.LFE137:
+ 176              		.section	.rodata.analysisMessage.str1.4,"aMS",%progbits,1
+ 177              		.align	2
+ 178              	.LC0:
+ 179 0000 54686572 		.ascii	"There is no the second part of the code\012\000"
+ 179      65206973 
+ 179      206E6F20 
+ 179      74686520 
+ 179      7365636F 
+ 180 0029 000000   		.align	2
+ 181              	.LC1:
+ 182 002c 54686572 		.ascii	"There is no the first part of the code\012\000"
+ 182      65206973 
+ 182      206E6F20 
+ 182      74686520 
+ 182      66697273 
+ 183              		.align	2
+ 184              	.LC2:
+ 185 0054 54686572 		.ascii	"There are all parts of the code\012\000"
+ 185      65206172 
+ 185      6520616C 
+ 185      6C207061 
+ 185      72747320 
+ 186              		.section	.text.analysisMessage,"ax",%progbits
+ 187              		.align	1
+ 188              		.global	analysisMessage
+ 189              		.syntax unified
+ 190              		.thumb
+ 191              		.thumb_func
+ 193              	analysisMessage:
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 11
+
+
+ 194              	.LFB138:
+ 344:Core/Src/main.c **** 
+ 345:Core/Src/main.c **** /**
+ 346:Core/Src/main.c ****  * @brief Analyzes messages function
+ 347:Core/Src/main.c ****  * 
+ 348:Core/Src/main.c ****  * Function that analyzes messages that have arrived in the last hour and sends a response
+ 349:Core/Src/main.c ****  * @param None
+ 350:Core/Src/main.c ****  * @retval None
+ 351:Core/Src/main.c ****  *
+ 352:Core/Src/main.c ****  * @code
+ 353:Core/Src/main.c ****  * if ((firstPartOfMessage == 1) && (secondPartOfMessage == 0)) {
+ 354:Core/Src/main.c ****  *       HAL_UART_Transmit_IT(&huart1, (uint8_t)"There is no the second part of the code\n", (uint1
+ 355:Core/Src/main.c ****  *   }
+ 356:Core/Src/main.c ****  *   else if ((firstPartOfMessage == 0) && (secondPartOfMessage == 1)) {
+ 357:Core/Src/main.c ****  *       HAL_UART_Transmit_IT(&huart1, (uint8_t)"There is no the first part of the code\n", (uint16
+ 358:Core/Src/main.c ****  *   }
+ 359:Core/Src/main.c ****  *   else if ((firstPartOfMessage == 1) && (secondPartOfMessage == 1)) {
+ 360:Core/Src/main.c ****  *       HAL_UART_Transmit_IT(&huart1, (uint8_t)"There are all parts of the code\n", (uint16_t)32);
+ 361:Core/Src/main.c ****  *       firstPartOfMessage = 0;
+ 362:Core/Src/main.c ****  *       secondPartOfMessage = 0;
+ 363:Core/Src/main.c ****  *
+ 364:Core/Src/main.c ****  *       for (int i = 0; i != 3; ++i) {
+ 365:Core/Src/main.c ****  *           code[i] = firstPartOfCode[i];
+ 366:Core/Src/main.c ****  *       }
+ 367:Core/Src/main.c ****  *
+ 368:Core/Src/main.c ****  *       for (int i = 0; i != 3; ++i) {
+ 369:Core/Src/main.c ****  *           code[i + 3] = secondPartOfCode[i];
+ 370:Core/Src/main.c ****  *       }
+ 371:Core/Src/main.c ****  *   }
+ 372:Core/Src/main.c ****  * @endcode
+ 373:Core/Src/main.c ****  */
+ 374:Core/Src/main.c **** void analysisMessage(void) {
+ 195              		.loc 1 374 28 is_stmt 1 view -0
+ 196              		.cfi_startproc
+ 197              		@ args = 0, pretend = 0, frame = 0
+ 198              		@ frame_needed = 0, uses_anonymous_args = 0
+ 199 0000 08B5     		push	{r3, lr}
+ 200              	.LCFI2:
+ 201              		.cfi_def_cfa_offset 8
+ 202              		.cfi_offset 3, -8
+ 203              		.cfi_offset 14, -4
+ 375:Core/Src/main.c ****     if ((firstPartOfMessage == 1) && (secondPartOfMessage == 0)) {
+ 204              		.loc 1 375 5 view .LVU43
+ 205              		.loc 1 375 29 is_stmt 0 view .LVU44
+ 206 0002 204B     		ldr	r3, .L28
+ 207 0004 1B68     		ldr	r3, [r3]
+ 208              		.loc 1 375 8 view .LVU45
+ 209 0006 012B     		cmp	r3, #1
+ 210 0008 07D0     		beq	.L25
+ 211              	.L17:
+ 376:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There is no the second part of the code\n", (uint16
+ 377:Core/Src/main.c ****     }
+ 378:Core/Src/main.c ****     else if ((firstPartOfMessage == 0) && (secondPartOfMessage == 1)) {
+ 212              		.loc 1 378 10 is_stmt 1 view .LVU46
+ 213              		.loc 1 378 13 is_stmt 0 view .LVU47
+ 214 000a 1BB9     		cbnz	r3, .L19
+ 215              		.loc 1 378 64 discriminator 1 view .LVU48
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 12
+
+
+ 216 000c 1E4A     		ldr	r2, .L28+4
+ 217 000e 1268     		ldr	r2, [r2]
+ 218              		.loc 1 378 40 discriminator 1 view .LVU49
+ 219 0010 012A     		cmp	r2, #1
+ 220 0012 0DD0     		beq	.L26
+ 221              	.L19:
+ 379:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There is no the first part of the code\n", (uint16_
+ 380:Core/Src/main.c ****     }
+ 381:Core/Src/main.c ****     else if ((firstPartOfMessage == 1) && (secondPartOfMessage == 1)) {
+ 222              		.loc 1 381 10 is_stmt 1 view .LVU50
+ 223              		.loc 1 381 13 is_stmt 0 view .LVU51
+ 224 0014 012B     		cmp	r3, #1
+ 225 0016 12D0     		beq	.L27
+ 226              	.L16:
+ 382:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There are all parts of the code\n", (uint16_t)32);
+ 383:Core/Src/main.c ****         firstPartOfMessage = 0;
+ 384:Core/Src/main.c ****         secondPartOfMessage = 0;
+ 385:Core/Src/main.c **** 
+ 386:Core/Src/main.c ****         for (int i = 0; i != 3; ++i) {
+ 387:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ 388:Core/Src/main.c ****         }
+ 389:Core/Src/main.c **** 
+ 390:Core/Src/main.c ****         for (int i = 0; i != 3; ++i) {
+ 391:Core/Src/main.c ****             code[i + 3] = secondPartOfCode[i];
+ 392:Core/Src/main.c ****         }
+ 393:Core/Src/main.c ****     }
+ 394:Core/Src/main.c **** }
+ 227              		.loc 1 394 1 view .LVU52
+ 228 0018 08BD     		pop	{r3, pc}
+ 229              	.L25:
+ 375:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There is no the second part of the code\n", (uint16
+ 230              		.loc 1 375 59 discriminator 1 view .LVU53
+ 231 001a 1B4A     		ldr	r2, .L28+4
+ 232 001c 1268     		ldr	r2, [r2]
+ 375:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There is no the second part of the code\n", (uint16
+ 233              		.loc 1 375 35 discriminator 1 view .LVU54
+ 234 001e 002A     		cmp	r2, #0
+ 235 0020 F3D1     		bne	.L17
+ 376:Core/Src/main.c ****     }
+ 236              		.loc 1 376 9 is_stmt 1 view .LVU55
+ 237 0022 2822     		movs	r2, #40
+ 238 0024 1949     		ldr	r1, .L28+8
+ 239 0026 C9B2     		uxtb	r1, r1
+ 240 0028 1948     		ldr	r0, .L28+12
+ 241 002a FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 242              	.LVL7:
+ 243 002e F3E7     		b	.L16
+ 244              	.L26:
+ 379:Core/Src/main.c ****     }
+ 245              		.loc 1 379 9 view .LVU56
+ 246 0030 2722     		movs	r2, #39
+ 247 0032 1849     		ldr	r1, .L28+16
+ 248 0034 C9B2     		uxtb	r1, r1
+ 249 0036 1648     		ldr	r0, .L28+12
+ 250 0038 FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 251              	.LVL8:
+ 252 003c ECE7     		b	.L16
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 13
+
+
+ 253              	.L27:
+ 381:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There are all parts of the code\n", (uint16_t)32);
+ 254              		.loc 1 381 64 is_stmt 0 discriminator 1 view .LVU57
+ 255 003e 124B     		ldr	r3, .L28+4
+ 256 0040 1B68     		ldr	r3, [r3]
+ 381:Core/Src/main.c ****         HAL_UART_Transmit_IT(&huart1, (uint8_t)"There are all parts of the code\n", (uint16_t)32);
+ 257              		.loc 1 381 40 discriminator 1 view .LVU58
+ 258 0042 012B     		cmp	r3, #1
+ 259 0044 E8D1     		bne	.L16
+ 382:Core/Src/main.c ****         firstPartOfMessage = 0;
+ 260              		.loc 1 382 9 is_stmt 1 view .LVU59
+ 261 0046 2022     		movs	r2, #32
+ 262 0048 1349     		ldr	r1, .L28+20
+ 263 004a C9B2     		uxtb	r1, r1
+ 264 004c 1048     		ldr	r0, .L28+12
+ 265 004e FFF7FEFF 		bl	HAL_UART_Transmit_IT
+ 266              	.LVL9:
+ 383:Core/Src/main.c ****         secondPartOfMessage = 0;
+ 267              		.loc 1 383 9 view .LVU60
+ 383:Core/Src/main.c ****         secondPartOfMessage = 0;
+ 268              		.loc 1 383 28 is_stmt 0 view .LVU61
+ 269 0052 0023     		movs	r3, #0
+ 270 0054 0B4A     		ldr	r2, .L28
+ 271 0056 1360     		str	r3, [r2]
+ 384:Core/Src/main.c **** 
+ 272              		.loc 1 384 9 is_stmt 1 view .LVU62
+ 384:Core/Src/main.c **** 
+ 273              		.loc 1 384 29 is_stmt 0 view .LVU63
+ 274 0058 0B4A     		ldr	r2, .L28+4
+ 275 005a 1360     		str	r3, [r2]
+ 386:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ 276              		.loc 1 386 9 is_stmt 1 view .LVU64
+ 277              	.LBB7:
+ 386:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ 278              		.loc 1 386 14 view .LVU65
+ 279              	.LVL10:
+ 386:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ 280              		.loc 1 386 9 is_stmt 0 view .LVU66
+ 281 005c 04E0     		b	.L20
+ 282              	.LVL11:
+ 283              	.L21:
+ 387:Core/Src/main.c ****         }
+ 284              		.loc 1 387 13 is_stmt 1 discriminator 3 view .LVU67
+ 387:Core/Src/main.c ****         }
+ 285              		.loc 1 387 38 is_stmt 0 discriminator 3 view .LVU68
+ 286 005e 0F4A     		ldr	r2, .L28+24
+ 287 0060 D15C     		ldrb	r1, [r2, r3]	@ zero_extendqisi2
+ 387:Core/Src/main.c ****         }
+ 288              		.loc 1 387 21 discriminator 3 view .LVU69
+ 289 0062 0F4A     		ldr	r2, .L28+28
+ 290 0064 D154     		strb	r1, [r2, r3]
+ 386:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ 291              		.loc 1 386 33 is_stmt 1 discriminator 3 view .LVU70
+ 292 0066 0133     		adds	r3, r3, #1
+ 293              	.LVL12:
+ 294              	.L20:
+ 386:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 14
+
+
+ 295              		.loc 1 386 25 discriminator 1 view .LVU71
+ 386:Core/Src/main.c ****             code[i] = firstPartOfCode[i];
+ 296              		.loc 1 386 9 is_stmt 0 discriminator 1 view .LVU72
+ 297 0068 032B     		cmp	r3, #3
+ 298 006a F8D1     		bne	.L21
+ 299              	.LBE7:
+ 300              	.LBB8:
+ 390:Core/Src/main.c ****             code[i + 3] = secondPartOfCode[i];
+ 301              		.loc 1 390 18 view .LVU73
+ 302 006c 0023     		movs	r3, #0
+ 303              	.LVL13:
+ 390:Core/Src/main.c ****             code[i + 3] = secondPartOfCode[i];
+ 304              		.loc 1 390 18 view .LVU74
+ 305 006e 05E0     		b	.L22
+ 306              	.LVL14:
+ 307              	.L23:
+ 391:Core/Src/main.c ****         }
+ 308              		.loc 1 391 13 is_stmt 1 discriminator 3 view .LVU75
+ 391:Core/Src/main.c ****         }
+ 309              		.loc 1 391 20 is_stmt 0 discriminator 3 view .LVU76
+ 310 0070 DA1C     		adds	r2, r3, #3
+ 391:Core/Src/main.c ****         }
+ 311              		.loc 1 391 43 discriminator 3 view .LVU77
+ 312 0072 0C49     		ldr	r1, .L28+32
+ 313 0074 C85C     		ldrb	r0, [r1, r3]	@ zero_extendqisi2
+ 391:Core/Src/main.c ****         }
+ 314              		.loc 1 391 25 discriminator 3 view .LVU78
+ 315 0076 0A49     		ldr	r1, .L28+28
+ 316 0078 8854     		strb	r0, [r1, r2]
+ 390:Core/Src/main.c ****             code[i + 3] = secondPartOfCode[i];
+ 317              		.loc 1 390 33 is_stmt 1 discriminator 3 view .LVU79
+ 318 007a 0133     		adds	r3, r3, #1
+ 319              	.LVL15:
+ 320              	.L22:
+ 390:Core/Src/main.c ****             code[i + 3] = secondPartOfCode[i];
+ 321              		.loc 1 390 25 discriminator 1 view .LVU80
+ 390:Core/Src/main.c ****             code[i + 3] = secondPartOfCode[i];
+ 322              		.loc 1 390 9 is_stmt 0 discriminator 1 view .LVU81
+ 323 007c 032B     		cmp	r3, #3
+ 324 007e F7D1     		bne	.L23
+ 325 0080 CAE7     		b	.L16
+ 326              	.L29:
+ 327 0082 00BF     		.align	2
+ 328              	.L28:
+ 329 0084 00000000 		.word	.LANCHOR1
+ 330 0088 00000000 		.word	.LANCHOR3
+ 331 008c 00000000 		.word	.LC0
+ 332 0090 00000000 		.word	.LANCHOR5
+ 333 0094 2C000000 		.word	.LC1
+ 334 0098 54000000 		.word	.LC2
+ 335 009c 00000000 		.word	.LANCHOR2
+ 336 00a0 00000000 		.word	.LANCHOR6
+ 337 00a4 00000000 		.word	.LANCHOR4
+ 338              	.LBE8:
+ 339              		.cfi_endproc
+ 340              	.LFE138:
+ 342              		.section	.text.HAL_TIM_PeriodElapsedCallback,"ax",%progbits
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 15
+
+
+ 343              		.align	1
+ 344              		.global	HAL_TIM_PeriodElapsedCallback
+ 345              		.syntax unified
+ 346              		.thumb
+ 347              		.thumb_func
+ 349              	HAL_TIM_PeriodElapsedCallback:
+ 350              	.LVL16:
+ 351              	.LFB139:
+ 395:Core/Src/main.c **** 
+ 396:Core/Src/main.c **** /**
+ 397:Core/Src/main.c ****  * @brief Internal interrupt that fires every hour and calls the analysisMessage function
+ 398:Core/Src/main.c ****  * @param None
+ 399:Core/Src/main.c ****  * @retval None
+ 400:Core/Src/main.c ****  *
+ 401:Core/Src/main.c ****  * @code
+ 402:Core/Src/main.c ****  * if (htim->Instance == TIM2)
+ 403:Core/Src/main.c ****  *   {
+ 404:Core/Src/main.c ****  *       analysisMessage();
+ 405:Core/Src/main.c ****  *   }
+ 406:Core/Src/main.c ****  * @endcode
+ 407:Core/Src/main.c ****  */
+ 408:Core/Src/main.c **** void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+ 409:Core/Src/main.c **** {
+ 352              		.loc 1 409 1 is_stmt 1 view -0
+ 353              		.cfi_startproc
+ 354              		@ args = 0, pretend = 0, frame = 0
+ 355              		@ frame_needed = 0, uses_anonymous_args = 0
+ 356              		.loc 1 409 1 is_stmt 0 view .LVU83
+ 357 0000 08B5     		push	{r3, lr}
+ 358              	.LCFI3:
+ 359              		.cfi_def_cfa_offset 8
+ 360              		.cfi_offset 3, -8
+ 361              		.cfi_offset 14, -4
+ 410:Core/Src/main.c ****     if (htim->Instance == TIM2)
+ 362              		.loc 1 410 5 is_stmt 1 view .LVU84
+ 363              		.loc 1 410 13 is_stmt 0 view .LVU85
+ 364 0002 0368     		ldr	r3, [r0]
+ 365              		.loc 1 410 8 view .LVU86
+ 366 0004 B3F1804F 		cmp	r3, #1073741824
+ 367 0008 00D0     		beq	.L33
+ 368              	.LVL17:
+ 369              	.L30:
+ 411:Core/Src/main.c ****     {
+ 412:Core/Src/main.c ****         analysisMessage();
+ 413:Core/Src/main.c ****     }
+ 414:Core/Src/main.c **** }
+ 370              		.loc 1 414 1 view .LVU87
+ 371 000a 08BD     		pop	{r3, pc}
+ 372              	.LVL18:
+ 373              	.L33:
+ 412:Core/Src/main.c ****     }
+ 374              		.loc 1 412 9 is_stmt 1 view .LVU88
+ 375 000c FFF7FEFF 		bl	analysisMessage
+ 376              	.LVL19:
+ 377              		.loc 1 414 1 is_stmt 0 view .LVU89
+ 378 0010 FBE7     		b	.L30
+ 379              		.cfi_endproc
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 16
+
+
+ 380              	.LFE139:
+ 382              		.section	.text.Error_Handler,"ax",%progbits
+ 383              		.align	1
+ 384              		.global	Error_Handler
+ 385              		.syntax unified
+ 386              		.thumb
+ 387              		.thumb_func
+ 389              	Error_Handler:
+ 390              	.LFB140:
+ 415:Core/Src/main.c **** 
+ 416:Core/Src/main.c **** /* USER CODE END 4 */
+ 417:Core/Src/main.c **** 
+ 418:Core/Src/main.c **** /**
+ 419:Core/Src/main.c ****   * @brief  This function is executed in case of error occurrence.
+ 420:Core/Src/main.c ****   * @retval None
+ 421:Core/Src/main.c ****   */
+ 422:Core/Src/main.c **** void Error_Handler(void)
+ 423:Core/Src/main.c **** {
+ 391              		.loc 1 423 1 is_stmt 1 view -0
+ 392              		.cfi_startproc
+ 393              		@ Volatile: function does not return.
+ 394              		@ args = 0, pretend = 0, frame = 0
+ 395              		@ frame_needed = 0, uses_anonymous_args = 0
+ 396              		@ link register save eliminated.
+ 424:Core/Src/main.c ****   /* USER CODE BEGIN Error_Handler_Debug */
+ 425:Core/Src/main.c ****   /* User can add his own implementation to report the HAL error return state */
+ 426:Core/Src/main.c ****   __disable_irq();
+ 397              		.loc 1 426 3 view .LVU91
+ 398              	.LBB9:
+ 399              	.LBI9:
+ 400              		.file 2 "Drivers/CMSIS/Include/cmsis_gcc.h"
+   1:Drivers/CMSIS/Include/cmsis_gcc.h **** /**************************************************************************//**
+   2:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @file     cmsis_gcc.h
+   3:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @brief    CMSIS compiler GCC header file
+   4:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @version  V5.2.0
+   5:Drivers/CMSIS/Include/cmsis_gcc.h ****  * @date     08. May 2019
+   6:Drivers/CMSIS/Include/cmsis_gcc.h ****  ******************************************************************************/
+   7:Drivers/CMSIS/Include/cmsis_gcc.h **** /*
+   8:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Copyright (c) 2009-2019 Arm Limited. All rights reserved.
+   9:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  10:Drivers/CMSIS/Include/cmsis_gcc.h ****  * SPDX-License-Identifier: Apache-2.0
+  11:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  12:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Licensed under the Apache License, Version 2.0 (the License); you may
+  13:Drivers/CMSIS/Include/cmsis_gcc.h ****  * not use this file except in compliance with the License.
+  14:Drivers/CMSIS/Include/cmsis_gcc.h ****  * You may obtain a copy of the License at
+  15:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  16:Drivers/CMSIS/Include/cmsis_gcc.h ****  * www.apache.org/licenses/LICENSE-2.0
+  17:Drivers/CMSIS/Include/cmsis_gcc.h ****  *
+  18:Drivers/CMSIS/Include/cmsis_gcc.h ****  * Unless required by applicable law or agreed to in writing, software
+  19:Drivers/CMSIS/Include/cmsis_gcc.h ****  * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+  20:Drivers/CMSIS/Include/cmsis_gcc.h ****  * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  21:Drivers/CMSIS/Include/cmsis_gcc.h ****  * See the License for the specific language governing permissions and
+  22:Drivers/CMSIS/Include/cmsis_gcc.h ****  * limitations under the License.
+  23:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+  24:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  25:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __CMSIS_GCC_H
+  26:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __CMSIS_GCC_H
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 17
+
+
+  27:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  28:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ignore some GCC warnings */
+  29:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic push
+  30:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wsign-conversion"
+  31:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wconversion"
+  32:Drivers/CMSIS/Include/cmsis_gcc.h **** #pragma GCC diagnostic ignored "-Wunused-parameter"
+  33:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  34:Drivers/CMSIS/Include/cmsis_gcc.h **** /* Fallback for __has_builtin */
+  35:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __has_builtin
+  36:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __has_builtin(x) (0)
+  37:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  38:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+  39:Drivers/CMSIS/Include/cmsis_gcc.h **** /* CMSIS compiler specific defines */
+  40:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ASM
+  41:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ASM                                  __asm
+  42:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  43:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __INLINE
+  44:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __INLINE                               inline
+  45:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  46:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_INLINE
+  47:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_INLINE                        static inline
+  48:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  49:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __STATIC_FORCEINLINE                 
+  50:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __STATIC_FORCEINLINE                   __attribute__((always_inline)) static inline
+  51:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif                                           
+  52:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __NO_RETURN
+  53:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __NO_RETURN                            __attribute__((__noreturn__))
+  54:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  55:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __USED
+  56:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __USED                                 __attribute__((used))
+  57:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  58:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __WEAK
+  59:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __WEAK                                 __attribute__((weak))
+  60:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  61:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED
+  62:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED                               __attribute__((packed, aligned(1)))
+  63:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  64:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_STRUCT
+  65:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_STRUCT                        struct __attribute__((packed, aligned(1)))
+  66:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  67:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __PACKED_UNION
+  68:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __PACKED_UNION                         union __attribute__((packed, aligned(1)))
+  69:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  70:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32        /* deprecated */
+  71:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  72:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  73:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  74:Drivers/CMSIS/Include/cmsis_gcc.h ****   struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  75:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  76:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
+  77:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  78:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_WRITE
+  79:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  80:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  81:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  82:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_WRITE { uint16_t v; };
+  83:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 18
+
+
+  84:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_WRITE(addr, val)    (void)((((struct T_UINT16_WRITE *)(void *)(addr))-
+  85:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  86:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT16_READ
+  87:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  88:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  89:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  90:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT16_READ { uint16_t v; };
+  91:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+  92:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT16_READ(addr)          (((const struct T_UINT16_READ *)(const void *)(add
+  93:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+  94:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_WRITE
+  95:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+  96:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+  97:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+  98:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_WRITE { uint32_t v; };
+  99:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 100:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_WRITE(addr, val)    (void)((((struct T_UINT32_WRITE *)(void *)(addr))-
+ 101:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 102:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __UNALIGNED_UINT32_READ
+ 103:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic push
+ 104:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wpacked"
+ 105:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic ignored "-Wattributes"
+ 106:Drivers/CMSIS/Include/cmsis_gcc.h ****   __PACKED_STRUCT T_UINT32_READ { uint32_t v; };
+ 107:Drivers/CMSIS/Include/cmsis_gcc.h ****   #pragma GCC diagnostic pop
+ 108:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __UNALIGNED_UINT32_READ(addr)          (((const struct T_UINT32_READ *)(const void *)(add
+ 109:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 110:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __ALIGNED
+ 111:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __ALIGNED(x)                           __attribute__((aligned(x)))
+ 112:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 113:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __RESTRICT
+ 114:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __RESTRICT                             __restrict
+ 115:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 116:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef   __COMPILER_BARRIER
+ 117:Drivers/CMSIS/Include/cmsis_gcc.h ****   #define __COMPILER_BARRIER()                   __ASM volatile("":::"memory")
+ 118:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 119:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 120:Drivers/CMSIS/Include/cmsis_gcc.h **** /* #########################  Startup and Lowlevel Init  ######################## */
+ 121:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 122:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __PROGRAM_START
+ 123:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 124:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 125:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Initializes data and bss sections
+ 126:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details This default implementations initialized all data and additional bss
+ 127:Drivers/CMSIS/Include/cmsis_gcc.h ****            sections relying on .copy.table and .zero.table specified properly
+ 128:Drivers/CMSIS/Include/cmsis_gcc.h ****            in the used linker script.
+ 129:Drivers/CMSIS/Include/cmsis_gcc.h ****   
+ 130:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 131:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
+ 132:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 133:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern void _start(void) __NO_RETURN;
+ 134:Drivers/CMSIS/Include/cmsis_gcc.h ****   
+ 135:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 136:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t const* src;
+ 137:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 138:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 139:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __copy_table_t;
+ 140:Drivers/CMSIS/Include/cmsis_gcc.h ****   
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 19
+
+
+ 141:Drivers/CMSIS/Include/cmsis_gcc.h ****   typedef struct {
+ 142:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t* dest;
+ 143:Drivers/CMSIS/Include/cmsis_gcc.h ****     uint32_t  wlen;
+ 144:Drivers/CMSIS/Include/cmsis_gcc.h ****   } __zero_table_t;
+ 145:Drivers/CMSIS/Include/cmsis_gcc.h ****   
+ 146:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_start__;
+ 147:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __copy_table_t __copy_table_end__;
+ 148:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_start__;
+ 149:Drivers/CMSIS/Include/cmsis_gcc.h ****   extern const __zero_table_t __zero_table_end__;
+ 150:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 151:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__copy_table_t const* pTable = &__copy_table_start__; pTable < &__copy_table_end__; ++pTable
+ 152:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 153:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = pTable->src[i];
+ 154:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 155:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 156:Drivers/CMSIS/Include/cmsis_gcc.h ****  
+ 157:Drivers/CMSIS/Include/cmsis_gcc.h ****   for (__zero_table_t const* pTable = &__zero_table_start__; pTable < &__zero_table_end__; ++pTable
+ 158:Drivers/CMSIS/Include/cmsis_gcc.h ****     for(uint32_t i=0u; i<pTable->wlen; ++i) {
+ 159:Drivers/CMSIS/Include/cmsis_gcc.h ****       pTable->dest[i] = 0u;
+ 160:Drivers/CMSIS/Include/cmsis_gcc.h ****     }
+ 161:Drivers/CMSIS/Include/cmsis_gcc.h ****   }
+ 162:Drivers/CMSIS/Include/cmsis_gcc.h ****  
+ 163:Drivers/CMSIS/Include/cmsis_gcc.h ****   _start();
+ 164:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 165:Drivers/CMSIS/Include/cmsis_gcc.h ****   
+ 166:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __PROGRAM_START           __cmsis_start
+ 167:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 168:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 169:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __INITIAL_SP
+ 170:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __INITIAL_SP              __StackTop
+ 171:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 172:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 173:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __STACK_LIMIT
+ 174:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __STACK_LIMIT             __StackLimit
+ 175:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 176:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 177:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE
+ 178:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE            __Vectors
+ 179:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 180:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 181:Drivers/CMSIS/Include/cmsis_gcc.h **** #ifndef __VECTOR_TABLE_ATTRIBUTE
+ 182:Drivers/CMSIS/Include/cmsis_gcc.h **** #define __VECTOR_TABLE_ATTRIBUTE  __attribute((used, section(".vectors")))
+ 183:Drivers/CMSIS/Include/cmsis_gcc.h **** #endif
+ 184:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 185:Drivers/CMSIS/Include/cmsis_gcc.h **** /* ###########################  Core Function Access  ########################### */
+ 186:Drivers/CMSIS/Include/cmsis_gcc.h **** /** \ingroup  CMSIS_Core_FunctionInterface
+ 187:Drivers/CMSIS/Include/cmsis_gcc.h ****     \defgroup CMSIS_Core_RegAccFunctions CMSIS Core Register Access Functions
+ 188:Drivers/CMSIS/Include/cmsis_gcc.h ****   @{
+ 189:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 190:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 191:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 192:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Enable IRQ Interrupts
+ 193:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Enables IRQ interrupts by clearing the I-bit in the CPSR.
+ 194:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 195:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 196:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __enable_irq(void)
+ 197:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 20
+
+
+ 198:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsie i" : : : "memory");
+ 199:Drivers/CMSIS/Include/cmsis_gcc.h **** }
+ 200:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 201:Drivers/CMSIS/Include/cmsis_gcc.h **** 
+ 202:Drivers/CMSIS/Include/cmsis_gcc.h **** /**
+ 203:Drivers/CMSIS/Include/cmsis_gcc.h ****   \brief   Disable IRQ Interrupts
+ 204:Drivers/CMSIS/Include/cmsis_gcc.h ****   \details Disables IRQ interrupts by setting the I-bit in the CPSR.
+ 205:Drivers/CMSIS/Include/cmsis_gcc.h ****            Can only be executed in Privileged modes.
+ 206:Drivers/CMSIS/Include/cmsis_gcc.h ****  */
+ 207:Drivers/CMSIS/Include/cmsis_gcc.h **** __STATIC_FORCEINLINE void __disable_irq(void)
+ 401              		.loc 2 207 27 view .LVU92
+ 402              	.LBB10:
+ 208:Drivers/CMSIS/Include/cmsis_gcc.h **** {
+ 209:Drivers/CMSIS/Include/cmsis_gcc.h ****   __ASM volatile ("cpsid i" : : : "memory");
+ 403              		.loc 2 209 3 view .LVU93
+ 404              		.syntax unified
+ 405              	@ 209 "Drivers/CMSIS/Include/cmsis_gcc.h" 1
+ 406 0000 72B6     		cpsid i
+ 407              	@ 0 "" 2
+ 408              		.thumb
+ 409              		.syntax unified
+ 410              	.L35:
+ 411              	.LBE10:
+ 412              	.LBE9:
+ 427:Core/Src/main.c ****   while (1)
+ 413              		.loc 1 427 3 discriminator 1 view .LVU94
+ 428:Core/Src/main.c ****   {
+ 429:Core/Src/main.c ****   }
+ 414              		.loc 1 429 3 discriminator 1 view .LVU95
+ 427:Core/Src/main.c ****   while (1)
+ 415              		.loc 1 427 9 discriminator 1 view .LVU96
+ 416 0002 FEE7     		b	.L35
+ 417              		.cfi_endproc
+ 418              	.LFE140:
+ 420              		.section	.text.MX_TIM2_Init,"ax",%progbits
+ 421              		.align	1
+ 422              		.syntax unified
+ 423              		.thumb
+ 424              		.thumb_func
+ 426              	MX_TIM2_Init:
+ 427              	.LFB134:
+ 208:Core/Src/main.c **** 
+ 428              		.loc 1 208 1 view -0
+ 429              		.cfi_startproc
+ 430              		@ args = 0, pretend = 0, frame = 32
+ 431              		@ frame_needed = 0, uses_anonymous_args = 0
+ 432 0000 00B5     		push	{lr}
+ 433              	.LCFI4:
+ 434              		.cfi_def_cfa_offset 4
+ 435              		.cfi_offset 14, -4
+ 436 0002 89B0     		sub	sp, sp, #36
+ 437              	.LCFI5:
+ 438              		.cfi_def_cfa_offset 40
+ 214:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 439              		.loc 1 214 3 view .LVU98
+ 214:Core/Src/main.c ****   TIM_MasterConfigTypeDef sMasterConfig = {0};
+ 440              		.loc 1 214 26 is_stmt 0 view .LVU99
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 21
+
+
+ 441 0004 0023     		movs	r3, #0
+ 442 0006 0493     		str	r3, [sp, #16]
+ 443 0008 0593     		str	r3, [sp, #20]
+ 444 000a 0693     		str	r3, [sp, #24]
+ 445 000c 0793     		str	r3, [sp, #28]
+ 215:Core/Src/main.c **** 
+ 446              		.loc 1 215 3 is_stmt 1 view .LVU100
+ 215:Core/Src/main.c **** 
+ 447              		.loc 1 215 27 is_stmt 0 view .LVU101
+ 448 000e 0193     		str	r3, [sp, #4]
+ 449 0010 0293     		str	r3, [sp, #8]
+ 450 0012 0393     		str	r3, [sp, #12]
+ 220:Core/Src/main.c ****   htim2.Init.Prescaler = 40000-1;
+ 451              		.loc 1 220 3 is_stmt 1 view .LVU102
+ 220:Core/Src/main.c ****   htim2.Init.Prescaler = 40000-1;
+ 452              		.loc 1 220 18 is_stmt 0 view .LVU103
+ 453 0014 1348     		ldr	r0, .L44
+ 454 0016 4FF08042 		mov	r2, #1073741824
+ 455 001a 0260     		str	r2, [r0]
+ 221:Core/Src/main.c ****   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 456              		.loc 1 221 3 is_stmt 1 view .LVU104
+ 221:Core/Src/main.c ****   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+ 457              		.loc 1 221 24 is_stmt 0 view .LVU105
+ 458 001c 49F63F42 		movw	r2, #39999
+ 459 0020 4260     		str	r2, [r0, #4]
+ 222:Core/Src/main.c ****   htim2.Init.Period = 7200000;
+ 460              		.loc 1 222 3 is_stmt 1 view .LVU106
+ 222:Core/Src/main.c ****   htim2.Init.Period = 7200000;
+ 461              		.loc 1 222 26 is_stmt 0 view .LVU107
+ 462 0022 8360     		str	r3, [r0, #8]
+ 223:Core/Src/main.c ****   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 463              		.loc 1 223 3 is_stmt 1 view .LVU108
+ 223:Core/Src/main.c ****   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+ 464              		.loc 1 223 21 is_stmt 0 view .LVU109
+ 465 0024 104A     		ldr	r2, .L44+4
+ 466 0026 C260     		str	r2, [r0, #12]
+ 224:Core/Src/main.c ****   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 467              		.loc 1 224 3 is_stmt 1 view .LVU110
+ 224:Core/Src/main.c ****   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+ 468              		.loc 1 224 28 is_stmt 0 view .LVU111
+ 469 0028 0361     		str	r3, [r0, #16]
+ 225:Core/Src/main.c ****   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+ 470              		.loc 1 225 3 is_stmt 1 view .LVU112
+ 225:Core/Src/main.c ****   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+ 471              		.loc 1 225 32 is_stmt 0 view .LVU113
+ 472 002a 8361     		str	r3, [r0, #24]
+ 226:Core/Src/main.c ****   {
+ 473              		.loc 1 226 3 is_stmt 1 view .LVU114
+ 226:Core/Src/main.c ****   {
+ 474              		.loc 1 226 7 is_stmt 0 view .LVU115
+ 475 002c FFF7FEFF 		bl	HAL_TIM_Base_Init
+ 476              	.LVL20:
+ 226:Core/Src/main.c ****   {
+ 477              		.loc 1 226 6 view .LVU116
+ 478 0030 90B9     		cbnz	r0, .L41
+ 230:Core/Src/main.c ****   if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+ 479              		.loc 1 230 3 is_stmt 1 view .LVU117
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 22
+
+
+ 230:Core/Src/main.c ****   if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+ 480              		.loc 1 230 34 is_stmt 0 view .LVU118
+ 481 0032 4FF48053 		mov	r3, #4096
+ 482 0036 0493     		str	r3, [sp, #16]
+ 231:Core/Src/main.c ****   {
+ 483              		.loc 1 231 3 is_stmt 1 view .LVU119
+ 231:Core/Src/main.c ****   {
+ 484              		.loc 1 231 7 is_stmt 0 view .LVU120
+ 485 0038 04A9     		add	r1, sp, #16
+ 486 003a 0A48     		ldr	r0, .L44
+ 487 003c FFF7FEFF 		bl	HAL_TIM_ConfigClockSource
+ 488              	.LVL21:
+ 231:Core/Src/main.c ****   {
+ 489              		.loc 1 231 6 view .LVU121
+ 490 0040 60B9     		cbnz	r0, .L42
+ 235:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 491              		.loc 1 235 3 is_stmt 1 view .LVU122
+ 235:Core/Src/main.c ****   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+ 492              		.loc 1 235 37 is_stmt 0 view .LVU123
+ 493 0042 0023     		movs	r3, #0
+ 494 0044 0193     		str	r3, [sp, #4]
+ 236:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+ 495              		.loc 1 236 3 is_stmt 1 view .LVU124
+ 236:Core/Src/main.c ****   if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+ 496              		.loc 1 236 33 is_stmt 0 view .LVU125
+ 497 0046 0393     		str	r3, [sp, #12]
+ 237:Core/Src/main.c ****   {
+ 498              		.loc 1 237 3 is_stmt 1 view .LVU126
+ 237:Core/Src/main.c ****   {
+ 499              		.loc 1 237 7 is_stmt 0 view .LVU127
+ 500 0048 01A9     		add	r1, sp, #4
+ 501 004a 0648     		ldr	r0, .L44
+ 502 004c FFF7FEFF 		bl	HAL_TIMEx_MasterConfigSynchronization
+ 503              	.LVL22:
+ 237:Core/Src/main.c ****   {
+ 504              		.loc 1 237 6 view .LVU128
+ 505 0050 30B9     		cbnz	r0, .L43
+ 245:Core/Src/main.c **** 
+ 506              		.loc 1 245 1 view .LVU129
+ 507 0052 09B0     		add	sp, sp, #36
+ 508              	.LCFI6:
+ 509              		.cfi_remember_state
+ 510              		.cfi_def_cfa_offset 4
+ 511              		@ sp needed
+ 512 0054 5DF804FB 		ldr	pc, [sp], #4
+ 513              	.L41:
+ 514              	.LCFI7:
+ 515              		.cfi_restore_state
+ 228:Core/Src/main.c ****   }
+ 516              		.loc 1 228 5 is_stmt 1 view .LVU130
+ 517 0058 FFF7FEFF 		bl	Error_Handler
+ 518              	.LVL23:
+ 519              	.L42:
+ 233:Core/Src/main.c ****   }
+ 520              		.loc 1 233 5 view .LVU131
+ 521 005c FFF7FEFF 		bl	Error_Handler
+ 522              	.LVL24:
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 23
+
+
+ 523              	.L43:
+ 239:Core/Src/main.c ****   }
+ 524              		.loc 1 239 5 view .LVU132
+ 525 0060 FFF7FEFF 		bl	Error_Handler
+ 526              	.LVL25:
+ 527              	.L45:
+ 528              		.align	2
+ 529              	.L44:
+ 530 0064 00000000 		.word	.LANCHOR7
+ 531 0068 00DD6D00 		.word	7200000
+ 532              		.cfi_endproc
+ 533              	.LFE134:
+ 535              		.section	.text.MX_USART1_UART_Init,"ax",%progbits
+ 536              		.align	1
+ 537              		.syntax unified
+ 538              		.thumb
+ 539              		.thumb_func
+ 541              	MX_USART1_UART_Init:
+ 542              	.LFB135:
+ 259:Core/Src/main.c **** 
+ 543              		.loc 1 259 1 view -0
+ 544              		.cfi_startproc
+ 545              		@ args = 0, pretend = 0, frame = 0
+ 546              		@ frame_needed = 0, uses_anonymous_args = 0
+ 547 0000 08B5     		push	{r3, lr}
+ 548              	.LCFI8:
+ 549              		.cfi_def_cfa_offset 8
+ 550              		.cfi_offset 3, -8
+ 551              		.cfi_offset 14, -4
+ 268:Core/Src/main.c ****   huart1.Init.BaudRate = 9600;
+ 552              		.loc 1 268 3 view .LVU134
+ 268:Core/Src/main.c ****   huart1.Init.BaudRate = 9600;
+ 553              		.loc 1 268 19 is_stmt 0 view .LVU135
+ 554 0002 0B48     		ldr	r0, .L50
+ 555 0004 0B4B     		ldr	r3, .L50+4
+ 556 0006 0360     		str	r3, [r0]
+ 269:Core/Src/main.c ****   huart1.Init.WordLength = UART_WORDLENGTH_8B;
+ 557              		.loc 1 269 3 is_stmt 1 view .LVU136
+ 269:Core/Src/main.c ****   huart1.Init.WordLength = UART_WORDLENGTH_8B;
+ 558              		.loc 1 269 24 is_stmt 0 view .LVU137
+ 559 0008 4FF41653 		mov	r3, #9600
+ 560 000c 4360     		str	r3, [r0, #4]
+ 270:Core/Src/main.c ****   huart1.Init.StopBits = UART_STOPBITS_1;
+ 561              		.loc 1 270 3 is_stmt 1 view .LVU138
+ 270:Core/Src/main.c ****   huart1.Init.StopBits = UART_STOPBITS_1;
+ 562              		.loc 1 270 26 is_stmt 0 view .LVU139
+ 563 000e 0023     		movs	r3, #0
+ 564 0010 8360     		str	r3, [r0, #8]
+ 271:Core/Src/main.c ****   huart1.Init.Parity = UART_PARITY_NONE;
+ 565              		.loc 1 271 3 is_stmt 1 view .LVU140
+ 271:Core/Src/main.c ****   huart1.Init.Parity = UART_PARITY_NONE;
+ 566              		.loc 1 271 24 is_stmt 0 view .LVU141
+ 567 0012 C360     		str	r3, [r0, #12]
+ 272:Core/Src/main.c ****   huart1.Init.Mode = UART_MODE_TX_RX;
+ 568              		.loc 1 272 3 is_stmt 1 view .LVU142
+ 272:Core/Src/main.c ****   huart1.Init.Mode = UART_MODE_TX_RX;
+ 569              		.loc 1 272 22 is_stmt 0 view .LVU143
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 24
+
+
+ 570 0014 0361     		str	r3, [r0, #16]
+ 273:Core/Src/main.c ****   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+ 571              		.loc 1 273 3 is_stmt 1 view .LVU144
+ 273:Core/Src/main.c ****   huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+ 572              		.loc 1 273 20 is_stmt 0 view .LVU145
+ 573 0016 0C22     		movs	r2, #12
+ 574 0018 4261     		str	r2, [r0, #20]
+ 274:Core/Src/main.c ****   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+ 575              		.loc 1 274 3 is_stmt 1 view .LVU146
+ 274:Core/Src/main.c ****   huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+ 576              		.loc 1 274 25 is_stmt 0 view .LVU147
+ 577 001a 8361     		str	r3, [r0, #24]
+ 275:Core/Src/main.c ****   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+ 578              		.loc 1 275 3 is_stmt 1 view .LVU148
+ 275:Core/Src/main.c ****   huart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+ 579              		.loc 1 275 28 is_stmt 0 view .LVU149
+ 580 001c C361     		str	r3, [r0, #28]
+ 276:Core/Src/main.c ****   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+ 581              		.loc 1 276 3 is_stmt 1 view .LVU150
+ 276:Core/Src/main.c ****   huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+ 582              		.loc 1 276 30 is_stmt 0 view .LVU151
+ 583 001e 0362     		str	r3, [r0, #32]
+ 277:Core/Src/main.c ****   if (HAL_UART_Init(&huart1) != HAL_OK)
+ 584              		.loc 1 277 3 is_stmt 1 view .LVU152
+ 277:Core/Src/main.c ****   if (HAL_UART_Init(&huart1) != HAL_OK)
+ 585              		.loc 1 277 38 is_stmt 0 view .LVU153
+ 586 0020 4362     		str	r3, [r0, #36]
+ 278:Core/Src/main.c ****   {
+ 587              		.loc 1 278 3 is_stmt 1 view .LVU154
+ 278:Core/Src/main.c ****   {
+ 588              		.loc 1 278 7 is_stmt 0 view .LVU155
+ 589 0022 FFF7FEFF 		bl	HAL_UART_Init
+ 590              	.LVL26:
+ 278:Core/Src/main.c ****   {
+ 591              		.loc 1 278 6 view .LVU156
+ 592 0026 00B9     		cbnz	r0, .L49
+ 286:Core/Src/main.c **** 
+ 593              		.loc 1 286 1 view .LVU157
+ 594 0028 08BD     		pop	{r3, pc}
+ 595              	.L49:
+ 280:Core/Src/main.c ****   }
+ 596              		.loc 1 280 5 is_stmt 1 view .LVU158
+ 597 002a FFF7FEFF 		bl	Error_Handler
+ 598              	.LVL27:
+ 599              	.L51:
+ 600 002e 00BF     		.align	2
+ 601              	.L50:
+ 602 0030 00000000 		.word	.LANCHOR5
+ 603 0034 00380140 		.word	1073821696
+ 604              		.cfi_endproc
+ 605              	.LFE135:
+ 607              		.section	.text.SystemClock_Config,"ax",%progbits
+ 608              		.align	1
+ 609              		.global	SystemClock_Config
+ 610              		.syntax unified
+ 611              		.thumb
+ 612              		.thumb_func
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 25
+
+
+ 614              	SystemClock_Config:
+ 615              	.LFB133:
+ 149:Core/Src/main.c ****   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+ 616              		.loc 1 149 1 view -0
+ 617              		.cfi_startproc
+ 618              		@ args = 0, pretend = 0, frame = 88
+ 619              		@ frame_needed = 0, uses_anonymous_args = 0
+ 620 0000 00B5     		push	{lr}
+ 621              	.LCFI9:
+ 622              		.cfi_def_cfa_offset 4
+ 623              		.cfi_offset 14, -4
+ 624 0002 97B0     		sub	sp, sp, #92
+ 625              	.LCFI10:
+ 626              		.cfi_def_cfa_offset 96
+ 150:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 627              		.loc 1 150 3 view .LVU160
+ 150:Core/Src/main.c ****   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+ 628              		.loc 1 150 22 is_stmt 0 view .LVU161
+ 629 0004 4422     		movs	r2, #68
+ 630 0006 0021     		movs	r1, #0
+ 631 0008 05A8     		add	r0, sp, #20
+ 632 000a FFF7FEFF 		bl	memset
+ 633              	.LVL28:
+ 151:Core/Src/main.c **** 
+ 634              		.loc 1 151 3 is_stmt 1 view .LVU162
+ 151:Core/Src/main.c **** 
+ 635              		.loc 1 151 22 is_stmt 0 view .LVU163
+ 636 000e 0023     		movs	r3, #0
+ 637 0010 0093     		str	r3, [sp]
+ 638 0012 0193     		str	r3, [sp, #4]
+ 639 0014 0293     		str	r3, [sp, #8]
+ 640 0016 0393     		str	r3, [sp, #12]
+ 641 0018 0493     		str	r3, [sp, #16]
+ 155:Core/Src/main.c ****   {
+ 642              		.loc 1 155 3 is_stmt 1 view .LVU164
+ 155:Core/Src/main.c ****   {
+ 643              		.loc 1 155 7 is_stmt 0 view .LVU165
+ 644 001a 4FF40070 		mov	r0, #512
+ 645 001e FFF7FEFF 		bl	HAL_PWREx_ControlVoltageScaling
+ 646              	.LVL29:
+ 155:Core/Src/main.c ****   {
+ 647              		.loc 1 155 6 view .LVU166
+ 648 0022 28BB     		cbnz	r0, .L57
+ 163:Core/Src/main.c ****   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+ 649              		.loc 1 163 3 is_stmt 1 view .LVU167
+ 163:Core/Src/main.c ****   RCC_OscInitStruct.MSIState = RCC_MSI_ON;
+ 650              		.loc 1 163 36 is_stmt 0 view .LVU168
+ 651 0024 1023     		movs	r3, #16
+ 652 0026 0593     		str	r3, [sp, #20]
+ 164:Core/Src/main.c ****   RCC_OscInitStruct.MSICalibrationValue = 0;
+ 653              		.loc 1 164 3 is_stmt 1 view .LVU169
+ 164:Core/Src/main.c ****   RCC_OscInitStruct.MSICalibrationValue = 0;
+ 654              		.loc 1 164 30 is_stmt 0 view .LVU170
+ 655 0028 0122     		movs	r2, #1
+ 656 002a 0B92     		str	r2, [sp, #44]
+ 165:Core/Src/main.c ****   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+ 657              		.loc 1 165 3 is_stmt 1 view .LVU171
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 26
+
+
+ 165:Core/Src/main.c ****   RCC_OscInitStruct.MSIClockRange = RCC_MSIRANGE_6;
+ 658              		.loc 1 165 41 is_stmt 0 view .LVU172
+ 659 002c 0023     		movs	r3, #0
+ 660 002e 0C93     		str	r3, [sp, #48]
+ 166:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 661              		.loc 1 166 3 is_stmt 1 view .LVU173
+ 166:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+ 662              		.loc 1 166 35 is_stmt 0 view .LVU174
+ 663 0030 6023     		movs	r3, #96
+ 664 0032 0D93     		str	r3, [sp, #52]
+ 167:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
+ 665              		.loc 1 167 3 is_stmt 1 view .LVU175
+ 167:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_MSI;
+ 666              		.loc 1 167 34 is_stmt 0 view .LVU176
+ 667 0034 0223     		movs	r3, #2
+ 668 0036 0F93     		str	r3, [sp, #60]
+ 168:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 1;
+ 669              		.loc 1 168 3 is_stmt 1 view .LVU177
+ 168:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLM = 1;
+ 670              		.loc 1 168 35 is_stmt 0 view .LVU178
+ 671 0038 1092     		str	r2, [sp, #64]
+ 169:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 40;
+ 672              		.loc 1 169 3 is_stmt 1 view .LVU179
+ 169:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLN = 40;
+ 673              		.loc 1 169 30 is_stmt 0 view .LVU180
+ 674 003a 1192     		str	r2, [sp, #68]
+ 170:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
+ 675              		.loc 1 170 3 is_stmt 1 view .LVU181
+ 170:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV7;
+ 676              		.loc 1 170 30 is_stmt 0 view .LVU182
+ 677 003c 2822     		movs	r2, #40
+ 678 003e 1292     		str	r2, [sp, #72]
+ 171:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+ 679              		.loc 1 171 3 is_stmt 1 view .LVU183
+ 171:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
+ 680              		.loc 1 171 30 is_stmt 0 view .LVU184
+ 681 0040 0722     		movs	r2, #7
+ 682 0042 1392     		str	r2, [sp, #76]
+ 172:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+ 683              		.loc 1 172 3 is_stmt 1 view .LVU185
+ 172:Core/Src/main.c ****   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
+ 684              		.loc 1 172 30 is_stmt 0 view .LVU186
+ 685 0044 1493     		str	r3, [sp, #80]
+ 173:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 686              		.loc 1 173 3 is_stmt 1 view .LVU187
+ 173:Core/Src/main.c ****   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+ 687              		.loc 1 173 30 is_stmt 0 view .LVU188
+ 688 0046 1593     		str	r3, [sp, #84]
+ 174:Core/Src/main.c ****   {
+ 689              		.loc 1 174 3 is_stmt 1 view .LVU189
+ 174:Core/Src/main.c ****   {
+ 690              		.loc 1 174 7 is_stmt 0 view .LVU190
+ 691 0048 05A8     		add	r0, sp, #20
+ 692 004a FFF7FEFF 		bl	HAL_RCC_OscConfig
+ 693              	.LVL30:
+ 174:Core/Src/main.c ****   {
+ 694              		.loc 1 174 6 view .LVU191
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 27
+
+
+ 695 004e 88B9     		cbnz	r0, .L58
+ 181:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 696              		.loc 1 181 3 is_stmt 1 view .LVU192
+ 181:Core/Src/main.c ****                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+ 697              		.loc 1 181 31 is_stmt 0 view .LVU193
+ 698 0050 0F23     		movs	r3, #15
+ 699 0052 0093     		str	r3, [sp]
+ 183:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 700              		.loc 1 183 3 is_stmt 1 view .LVU194
+ 183:Core/Src/main.c ****   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+ 701              		.loc 1 183 34 is_stmt 0 view .LVU195
+ 702 0054 0323     		movs	r3, #3
+ 703 0056 0193     		str	r3, [sp, #4]
+ 184:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 704              		.loc 1 184 3 is_stmt 1 view .LVU196
+ 184:Core/Src/main.c ****   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+ 705              		.loc 1 184 35 is_stmt 0 view .LVU197
+ 706 0058 0023     		movs	r3, #0
+ 707 005a 0293     		str	r3, [sp, #8]
+ 185:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 708              		.loc 1 185 3 is_stmt 1 view .LVU198
+ 185:Core/Src/main.c ****   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+ 709              		.loc 1 185 36 is_stmt 0 view .LVU199
+ 710 005c 0393     		str	r3, [sp, #12]
+ 186:Core/Src/main.c **** 
+ 711              		.loc 1 186 3 is_stmt 1 view .LVU200
+ 186:Core/Src/main.c **** 
+ 712              		.loc 1 186 36 is_stmt 0 view .LVU201
+ 713 005e 0493     		str	r3, [sp, #16]
+ 188:Core/Src/main.c ****   {
+ 714              		.loc 1 188 3 is_stmt 1 view .LVU202
+ 188:Core/Src/main.c ****   {
+ 715              		.loc 1 188 7 is_stmt 0 view .LVU203
+ 716 0060 0421     		movs	r1, #4
+ 717 0062 6846     		mov	r0, sp
+ 718 0064 FFF7FEFF 		bl	HAL_RCC_ClockConfig
+ 719              	.LVL31:
+ 188:Core/Src/main.c ****   {
+ 720              		.loc 1 188 6 view .LVU204
+ 721 0068 30B9     		cbnz	r0, .L59
+ 192:Core/Src/main.c **** 
+ 722              		.loc 1 192 1 view .LVU205
+ 723 006a 17B0     		add	sp, sp, #92
+ 724              	.LCFI11:
+ 725              		.cfi_remember_state
+ 726              		.cfi_def_cfa_offset 4
+ 727              		@ sp needed
+ 728 006c 5DF804FB 		ldr	pc, [sp], #4
+ 729              	.L57:
+ 730              	.LCFI12:
+ 731              		.cfi_restore_state
+ 157:Core/Src/main.c ****   }
+ 732              		.loc 1 157 5 is_stmt 1 view .LVU206
+ 733 0070 FFF7FEFF 		bl	Error_Handler
+ 734              	.LVL32:
+ 735              	.L58:
+ 176:Core/Src/main.c ****   }
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 28
+
+
+ 736              		.loc 1 176 5 view .LVU207
+ 737 0074 FFF7FEFF 		bl	Error_Handler
+ 738              	.LVL33:
+ 739              	.L59:
+ 190:Core/Src/main.c ****   }
+ 740              		.loc 1 190 5 view .LVU208
+ 741 0078 FFF7FEFF 		bl	Error_Handler
+ 742              	.LVL34:
+ 743              		.cfi_endproc
+ 744              	.LFE133:
+ 746              		.section	.text.main,"ax",%progbits
+ 747              		.align	1
+ 748              		.global	main
+ 749              		.syntax unified
+ 750              		.thumb
+ 751              		.thumb_func
+ 753              	main:
+ 754              	.LFB132:
+  93:Core/Src/main.c **** 
+ 755              		.loc 1 93 1 view -0
+ 756              		.cfi_startproc
+ 757              		@ Volatile: function does not return.
+ 758              		@ args = 0, pretend = 0, frame = 0
+ 759              		@ frame_needed = 0, uses_anonymous_args = 0
+ 760 0000 08B5     		push	{r3, lr}
+ 761              	.LCFI13:
+ 762              		.cfi_def_cfa_offset 8
+ 763              		.cfi_offset 3, -8
+ 764              		.cfi_offset 14, -4
+ 102:Core/Src/main.c **** 
+ 765              		.loc 1 102 3 view .LVU210
+ 766 0002 FFF7FEFF 		bl	HAL_Init
+ 767              	.LVL35:
+ 109:Core/Src/main.c **** 
+ 768              		.loc 1 109 3 view .LVU211
+ 769 0006 FFF7FEFF 		bl	SystemClock_Config
+ 770              	.LVL36:
+ 116:Core/Src/main.c ****   MX_TIM2_Init();
+ 771              		.loc 1 116 3 view .LVU212
+ 772 000a FFF7FEFF 		bl	MX_GPIO_Init
+ 773              	.LVL37:
+ 117:Core/Src/main.c ****   MX_USART1_UART_Init();
+ 774              		.loc 1 117 3 view .LVU213
+ 775 000e FFF7FEFF 		bl	MX_TIM2_Init
+ 776              	.LVL38:
+ 118:Core/Src/main.c ****   /* USER CODE BEGIN 2 */
+ 777              		.loc 1 118 3 view .LVU214
+ 778 0012 FFF7FEFF 		bl	MX_USART1_UART_Init
+ 779              	.LVL39:
+ 126:Core/Src/main.c **** 
+ 780              		.loc 1 126 3 view .LVU215
+ 781 0016 0548     		ldr	r0, .L63
+ 782 0018 FFF7FEFF 		bl	HAL_TIM_Base_Start_IT
+ 783              	.LVL40:
+ 784              	.L61:
+ 128:Core/Src/main.c ****   {
+ 785              		.loc 1 128 3 discriminator 1 view .LVU216
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 29
+
+
+ 133:Core/Src/main.c **** 
+ 786              		.loc 1 133 7 discriminator 1 view .LVU217
+ 787 001c 0522     		movs	r2, #5
+ 788 001e 0449     		ldr	r1, .L63+4
+ 789 0020 0448     		ldr	r0, .L63+8
+ 790 0022 FFF7FEFF 		bl	HAL_UART_Receive_IT
+ 791              	.LVL41:
+ 135:Core/Src/main.c ****   }
+ 792              		.loc 1 135 7 discriminator 1 view .LVU218
+ 793 0026 FFF7FEFF 		bl	selectMessage
+ 794              	.LVL42:
+ 128:Core/Src/main.c ****   {
+ 795              		.loc 1 128 9 discriminator 1 view .LVU219
+ 796 002a F7E7     		b	.L61
+ 797              	.L64:
+ 798              		.align	2
+ 799              	.L63:
+ 800 002c 00000000 		.word	.LANCHOR7
+ 801 0030 00000000 		.word	.LANCHOR0
+ 802 0034 00000000 		.word	.LANCHOR5
+ 803              		.cfi_endproc
+ 804              	.LFE132:
+ 806              		.global	secondPartOfCode
+ 807              		.global	firstPartOfCode
+ 808              		.global	code
+ 809              		.global	message
+ 810              		.global	secondPartOfMessage
+ 811              		.global	firstPartOfMessage
+ 812              		.global	huart1
+ 813              		.global	htim2
+ 814              		.section	.bss.firstPartOfMessage,"aw",%nobits
+ 815              		.align	2
+ 816              		.set	.LANCHOR1,. + 0
+ 819              	firstPartOfMessage:
+ 820 0000 00000000 		.space	4
+ 821              		.section	.bss.htim2,"aw",%nobits
+ 822              		.align	2
+ 823              		.set	.LANCHOR7,. + 0
+ 826              	htim2:
+ 827 0000 00000000 		.space	76
+ 827      00000000 
+ 827      00000000 
+ 827      00000000 
+ 827      00000000 
+ 828              		.section	.bss.huart1,"aw",%nobits
+ 829              		.align	2
+ 830              		.set	.LANCHOR5,. + 0
+ 833              	huart1:
+ 834 0000 00000000 		.space	136
+ 834      00000000 
+ 834      00000000 
+ 834      00000000 
+ 834      00000000 
+ 835              		.section	.bss.secondPartOfMessage,"aw",%nobits
+ 836              		.align	2
+ 837              		.set	.LANCHOR3,. + 0
+ 840              	secondPartOfMessage:
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 30
+
+
+ 841 0000 00000000 		.space	4
+ 842              		.section	.data.code,"aw"
+ 843              		.align	2
+ 844              		.set	.LANCHOR6,. + 0
+ 847              	code:
+ 848 0000 30303030 		.ascii	"000000"
+ 848      3030
+ 849              		.section	.data.firstPartOfCode,"aw"
+ 850              		.align	2
+ 851              		.set	.LANCHOR2,. + 0
+ 854              	firstPartOfCode:
+ 855 0000 303030   		.ascii	"000"
+ 856              		.section	.data.message,"aw"
+ 857              		.align	2
+ 858              		.set	.LANCHOR0,. + 0
+ 861              	message:
+ 862 0000 30303030 		.ascii	"00000"
+ 862      30
+ 863              		.section	.data.secondPartOfCode,"aw"
+ 864              		.align	2
+ 865              		.set	.LANCHOR4,. + 0
+ 868              	secondPartOfCode:
+ 869 0000 303030   		.ascii	"000"
+ 870              		.text
+ 871              	.Letext0:
+ 872              		.file 3 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 873              		.file 4 "c:\\program files (x86)\\gnu arm embedded toolchain\\10 2021.10\\arm-none-eabi\\include\\
+ 874              		.file 5 "Drivers/CMSIS/Device/ST/STM32L4xx/Include/stm32l433xx.h"
+ 875              		.file 6 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_def.h"
+ 876              		.file 7 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_rcc.h"
+ 877              		.file 8 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_dma.h"
+ 878              		.file 9 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim.h"
+ 879              		.file 10 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_uart.h"
+ 880              		.file 11 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_tim_ex.h"
+ 881              		.file 12 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal_pwr_ex.h"
+ 882              		.file 13 "Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h"
+ 883              		.file 14 "<built-in>"
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 31
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:20     .text.MX_GPIO_Init:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:25     .text.MX_GPIO_Init:00000000 MX_GPIO_Init
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:61     .text.MX_GPIO_Init:0000001c $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:66     .text.selectMessage:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:72     .text.selectMessage:00000000 selectMessage
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:167    .text.selectMessage:00000048 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:177    .rodata.analysisMessage.str1.4:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:187    .text.analysisMessage:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:193    .text.analysisMessage:00000000 analysisMessage
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:329    .text.analysisMessage:00000084 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:343    .text.HAL_TIM_PeriodElapsedCallback:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:349    .text.HAL_TIM_PeriodElapsedCallback:00000000 HAL_TIM_PeriodElapsedCallback
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:383    .text.Error_Handler:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:389    .text.Error_Handler:00000000 Error_Handler
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:421    .text.MX_TIM2_Init:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:426    .text.MX_TIM2_Init:00000000 MX_TIM2_Init
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:530    .text.MX_TIM2_Init:00000064 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:536    .text.MX_USART1_UART_Init:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:541    .text.MX_USART1_UART_Init:00000000 MX_USART1_UART_Init
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:602    .text.MX_USART1_UART_Init:00000030 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:608    .text.SystemClock_Config:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:614    .text.SystemClock_Config:00000000 SystemClock_Config
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:747    .text.main:00000000 $t
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:753    .text.main:00000000 main
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:800    .text.main:0000002c $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:868    .data.secondPartOfCode:00000000 secondPartOfCode
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:854    .data.firstPartOfCode:00000000 firstPartOfCode
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:847    .data.code:00000000 code
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:861    .data.message:00000000 message
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:840    .bss.secondPartOfMessage:00000000 secondPartOfMessage
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:819    .bss.firstPartOfMessage:00000000 firstPartOfMessage
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:833    .bss.huart1:00000000 huart1
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:826    .bss.htim2:00000000 htim2
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:815    .bss.firstPartOfMessage:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:822    .bss.htim2:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:829    .bss.huart1:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:836    .bss.secondPartOfMessage:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:843    .data.code:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:850    .data.firstPartOfCode:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:857    .data.message:00000000 $d
+C:\Users\faddy\AppData\Local\Temp\ccukbei8.s:864    .data.secondPartOfCode:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_UART_Transmit_IT
+HAL_TIM_Base_Init
+HAL_TIM_ConfigClockSource
+HAL_TIMEx_MasterConfigSynchronization
+HAL_UART_Init
+memset
+HAL_PWREx_ControlVoltageScaling
+HAL_RCC_OscConfig
+HAL_RCC_ClockConfig
+HAL_Init
+HAL_TIM_Base_Start_IT
+HAL_UART_Receive_IT
+ARM GAS  C:\Users\faddy\AppData\Local\Temp\ccukbei8.s 			page 32
+
+
